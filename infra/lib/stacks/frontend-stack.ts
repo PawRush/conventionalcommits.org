@@ -59,30 +59,6 @@ export class FrontendStack extends cdk.Stack {
         ],
       },
       insertHttpSecurityHeaders: false,
-      // Security headers
-      responseHeadersPolicyProps: {
-        securityHeadersBehavior: {
-          contentTypeOptions: { override: true },
-          frameOptions: {
-            frameOption: cloudfront.HeadersFrameOption.DENY,
-            override: true,
-          },
-          strictTransportSecurity: {
-            accessControlMaxAge: cdk.Duration.seconds(47304000),
-            includeSubdomains: true,
-            override: true,
-          },
-        },
-        customHeadersBehavior: {
-          customHeaders: [
-            {
-              header: "Cache-Control",
-              value: "no-store, no-cache",
-              override: true,
-            },
-          ],
-        },
-      },
       // CloudFront distribution configuration
       cloudFrontDistributionProps: {
         comment: `${id} - ${environment}`,
