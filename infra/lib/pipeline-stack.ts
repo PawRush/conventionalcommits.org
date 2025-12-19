@@ -170,11 +170,11 @@ export class PipelineStack extends cdk.Stack {
       stages,
     });
 
-    // Subscribe to notifications
-    this.pipeline.notifyOnExecutionStateChange(
-      "PipelineExecutionNotifications",
-      notificationTopic,
-    );
+    // Subscribe to notifications (disabled due to CodeStarNotifications API issues)
+    // this.pipeline.notifyOnExecutionStateChange(
+    //   "PipelineExecutionNotifications",
+    //   notificationTopic,
+    // );
 
     // Outputs
     new cdk.CfnOutput(this, "PipelineName", {

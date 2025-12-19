@@ -10,7 +10,7 @@ phases:
       nodejs: latest
     commands:
       - echo "Installing dependencies for linting..."
-      - npm ci --legacy-peer-deps --no-progress
+      - npm install --legacy-peer-deps --no-progress
 
   build:
     commands:

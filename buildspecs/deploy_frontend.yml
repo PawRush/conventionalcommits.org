@@ -10,7 +10,7 @@ phases:
       nodejs: latest
     commands:
       - echo "Installing CDK and dependencies..."
-      - (cd infra && npm ci --legacy-peer-deps --no-progress)
+      - (cd infra && npm install --legacy-peer-deps --no-progress)
 
   build:
     commands:
