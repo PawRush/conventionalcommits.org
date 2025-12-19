@@ -101,7 +101,7 @@ export class CodeBuildRole extends Construct {
         }),
       );
 
-      // S3 bucket for CDK bootstrap artifacts
+      // S3 bucket for CDK bootstrap artifacts and assets
       this.role.addToPrincipalPolicy(
         new iam.PolicyStatement({
           effect: iam.Effect.ALLOW,
@@ -114,7 +114,12 @@ export class CodeBuildRole extends Construct {
             "s3:PutObject",
             "s3:GetObject",
           ],
-          resources: ["arn:aws:s3:::cdktoolkit-*", "arn:aws:s3:::cdktoolkit-*/*"],
+          resources: [
+            "arn:aws:s3:::cdktoolkit-*",
+            "arn:aws:s3:::cdktoolkit-*/*",
+            "arn:aws:s3:::cdk-hnb659fds-assets-*",
+            "arn:aws:s3:::cdk-hnb659fds-assets-*/*",
+          ],
         }),
       );
 
