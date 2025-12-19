@@ -33,6 +33,34 @@ To run it make sure you have [docker-compose installed](https://docs.docker.com/
 
 Once the website will be compiled, you can see the website visiting `http://localhost:1313`
 
+## Deployment
+
+The website is deployed to AWS S3 + CloudFront CDN. See [`./deployment_plan.md`](./deployment_plan.md) for complete deployment information and recovery procedures.
+
+**Live Website:** https://d2wm29n45lvv27.cloudfront.net
+
+### Deploying Changes
+
+```bash
+# Deploy to personal preview environment
+./scripts/deploy.sh
+
+# Deploy to specific environment
+./scripts/deploy.sh dev               # Deploy to dev
+./scripts/deploy.sh prod              # Deploy to production
+
+# Update infrastructure without rebuilding assets
+WITH_ASSETS=false ./scripts/deploy.sh
+```
+
+### CloudFront Cache
+
+After deployment, you can invalidate the CloudFront cache:
+
+```bash
+aws cloudfront create-invalidation --distribution-id E14H4C9AFYUUHF --paths "/*"
+```
+
 ## Badges!
 
 Tell your users that you use the Conventional Commits specification:
