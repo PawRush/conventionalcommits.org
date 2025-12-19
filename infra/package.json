@@ -13,7 +13,9 @@
     "deploy:preview": "cdk deploy --all --require-approval never --progress events",
     "deploy:dev": "cdk deploy --all --context environment=dev --require-approval never --progress events",
     "deploy:prod": "cdk deploy --all --context environment=prod --progress events",
+    "deploy:pipeline": "cdk deploy ConventionalCommitsPipelineStack --context codeConnectionArn=$CODE_CONNECTION_ARN --context repositoryName=PawRush/conventionalcommits.org --context branchName=deploy-to-aws --context pipelineOnly=true --require-approval never --progress events",
     "destroy": "cdk destroy --all",
+    "destroy:pipeline": "cdk destroy ConventionalCommitsPipelineStack --context pipelineOnly=true",
     "synth": "cdk synth",
     "diff": "cdk diff"
   },

@@ -1,0 +1,31 @@
+version: 0.2
+
+env:
+  variables:
+    NPM_CONFIG_PRODUCTION: "false"
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: latest
+    commands:
+      - echo "Installing Hugo..."
+      - apt-get update -qq && apt-get install -y -qq hugo
+      - echo "Hugo version:" && hugo version
+
+  build:
+    commands:
+      - echo "Building static site with Hugo..."
+      - hugo --minify
+      - ls -la public/ | head -10
+      - echo "✓ Frontend build complete"
+
+artifacts:
+  files:
+    - "public/**/*"
+  name: FrontendBuildOutput
+  discard-paths: "no"
+
+cache:
+  paths:
+    - "~/.npm/**/*"

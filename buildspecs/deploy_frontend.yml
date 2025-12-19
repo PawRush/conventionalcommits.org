@@ -1,0 +1,41 @@
+version: 0.2
+
+env:
+  variables:
+    NPM_CONFIG_PRODUCTION: "false"
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: latest
+    commands:
+      - echo "Installing CDK and dependencies..."
+      - (cd infra && npm ci --legacy-peer-deps --no-progress)
+
+  build:
+    commands:
+      - echo "Preparing artifacts..."
+      - cp -r $CODEBUILD_SRC_DIR_FrontendBuildOutput/public/* . 2>/dev/null || echo "No frontend artifacts found"
+      - echo "Building CDK stack..."
+      - (cd infra && npm run build)
+      - echo "Deploying with CDK to $ENVIRONMENT..."
+      - (cd infra && npx cdk deploy ConventionalCommitsFrontend-$ENVIRONMENT --context environment=$ENVIRONMENT --context withAssets=false --require-approval never --progress events)
+      - echo "Getting CloudFormation outputs..."
+      - BUCKET=$(aws cloudformation describe-stacks --stack-name "ConventionalCommitsFrontend-$ENVIRONMENT" --query 'Stacks[0].Outputs[?OutputKey==`BucketName`].OutputValue' --output text)
+      - DIST_ID=$(aws cloudformation describe-stacks --stack-name "ConventionalCommitsFrontend-$ENVIRONMENT" --query 'Stacks[0].Outputs[?OutputKey==`DistributionId`].OutputValue' --output text)
+      - echo "Syncing content to S3:$BUCKET..."
+      - aws s3 sync . s3://$BUCKET/ --delete --exclude '.git*' --exclude 'buildspecs/*' --exclude 'infra/*' --exclude 'scripts/*' --exclude '.claude/*'
+      - echo "Invalidating CloudFront cache..."
+      - aws cloudfront create-invalidation --distribution-id $DIST_ID --paths "/*"
+      - echo "✓ Frontend deployment complete"
+      - echo "DEPLOYMENT_BUCKET=$BUCKET" > deployment-outputs.env
+      - echo "CLOUDFRONT_ID=$DIST_ID" >> deployment-outputs.env
+
+artifacts:
+  files:
+    - "deployment-outputs.env"
+  name: FrontendDeployOutput
+
+cache:
+  paths:
+    - "~/.npm/**/*"

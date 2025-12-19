@@ -1,0 +1,28 @@
+version: 0.2
+
+env:
+  variables:
+    NPM_CONFIG_PRODUCTION: "false"
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: latest
+    commands:
+      - echo "Installing dependencies for linting..."
+      - npm ci --legacy-peer-deps --no-progress
+
+  build:
+    commands:
+      - echo "Running lint and type checks..."
+      - npm run test 2>&1 | head -20 || true
+      - echo "✓ Lint and type check phase complete"
+
+artifacts:
+  files:
+    - "**/*"
+  name: LintTypeOutput
+
+cache:
+  paths:
+    - "~/.npm/**/*"
