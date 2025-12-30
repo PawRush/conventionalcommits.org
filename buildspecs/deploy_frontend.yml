@@ -6,13 +6,15 @@ phases:
       nodejs: latest
     commands:
       - echo "Installing CDK dependencies..."
-      - cd infra && npm ci --no-progress
+      - cd $CODEBUILD_SRC_DIR/infra && npm ci --no-progress
 
   build:
     commands:
       - echo "Deploying frontend to production..."
-      - cp -r $CODEBUILD_SRC_DIR_FrontendBuildOutput/public ./
-      - npm run build
+      - cd $CODEBUILD_SRC_DIR
+      - mkdir -p public
+      - cp -r $CODEBUILD_SRC_DIR_FrontendBuildOutput/public/* ./public/
+      - cd infra && npm run build
       - |
         npx cdk deploy ConventionalCommitsFrontend-$ENVIRONMENT \
           --context environment=$ENVIRONMENT \
@@ -25,7 +27,7 @@ phases:
       - DIST_ID=$(aws cloudformation describe-stacks --stack-name ConventionalCommitsFrontend-$ENVIRONMENT --query 'Stacks[0].Outputs[?OutputKey==`DistributionId`].OutputValue' --output text)
       - WEBSITE_URL=$(aws cloudformation describe-stacks --stack-name ConventionalCommitsFrontend-$ENVIRONMENT --query 'Stacks[0].Outputs[?OutputKey==`WebsiteURL`].OutputValue' --output text)
       - echo "Syncing files to S3..."
-      - aws s3 sync public/ s3://$BUCKET/ --delete
+      - aws s3 sync $CODEBUILD_SRC_DIR/public/ s3://$BUCKET/ --delete
       - echo "Creating CloudFront invalidation..."
       - INVALIDATION_ID=$(aws cloudfront create-invalidation --distribution-id $DIST_ID --paths "/*" --query 'Invalidation.Id' --output text)
       - echo "Waiting for invalidation to complete..."
