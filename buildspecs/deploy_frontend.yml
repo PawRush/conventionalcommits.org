@@ -6,7 +6,7 @@ phases:
       nodejs: latest
     commands:
       - echo "Installing CDK dependencies..."
-      - cd $CODEBUILD_SRC_DIR/infra && npm ci --no-progress
+      - cd $CODEBUILD_SRC_DIR/infra && npm install --no-progress
 
   build:
     commands:
