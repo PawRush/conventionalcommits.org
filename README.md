@@ -33,6 +33,17 @@ To run it make sure you have [docker-compose installed](https://docs.docker.com/
 
 Once the website will be compiled, you can see the website visiting `http://localhost:1313`
 
+## Deployment
+
+**Live URL:** https://d34lfyp508h3dr.cloudfront.net
+
+Deploy to AWS using:
+```bash
+./scripts/deploy.sh
+```
+
+For full deployment details, configuration, and troubleshooting, see [DEPLOYMENT.md](./DEPLOYMENT.md).
+
 ## Badges!
 
 Tell your users that you use the Conventional Commits specification:
