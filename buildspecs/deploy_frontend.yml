@@ -1,0 +1,45 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: latest
+    commands:
+      - echo "Installing CDK dependencies..."
+      - cd infra && npm ci --no-progress
+
+  build:
+    commands:
+      - echo "Deploying frontend to production..."
+      - cp -r $CODEBUILD_SRC_DIR_FrontendBuildOutput/public ./
+      - npm run build
+      - |
+        npx cdk deploy ConventionalCommitsFrontend-$ENVIRONMENT \
+          --context environment=$ENVIRONMENT \
+          --context withAssets=false \
+          --context pipelineOnly=false \
+          --require-approval never \
+          --progress events
+      - echo "Getting stack outputs..."
+      - BUCKET=$(aws cloudformation describe-stacks --stack-name ConventionalCommitsFrontend-$ENVIRONMENT --query 'Stacks[0].Outputs[?OutputKey==`BucketName`].OutputValue' --output text)
+      - DIST_ID=$(aws cloudformation describe-stacks --stack-name ConventionalCommitsFrontend-$ENVIRONMENT --query 'Stacks[0].Outputs[?OutputKey==`DistributionId`].OutputValue' --output text)
+      - WEBSITE_URL=$(aws cloudformation describe-stacks --stack-name ConventionalCommitsFrontend-$ENVIRONMENT --query 'Stacks[0].Outputs[?OutputKey==`WebsiteURL`].OutputValue' --output text)
+      - echo "Syncing files to S3..."
+      - aws s3 sync public/ s3://$BUCKET/ --delete
+      - echo "Creating CloudFront invalidation..."
+      - INVALIDATION_ID=$(aws cloudfront create-invalidation --distribution-id $DIST_ID --paths "/*" --query 'Invalidation.Id' --output text)
+      - echo "Waiting for invalidation to complete..."
+      - aws cloudfront wait invalidation-completed --distribution-id $DIST_ID --id $INVALIDATION_ID
+      - echo "Deployment completed successfully!"
+      - echo "Website URL:$WEBSITE_URL"
+      - echo "WEBSITE_URL=$WEBSITE_URL" > frontend-outputs.env
+      - echo "DIST_ID=$DIST_ID" >> frontend-outputs.env
+
+artifacts:
+  files:
+    - frontend-outputs.env
+  name: FrontendDeployOutput
+
+cache:
+  paths:
+    - "infra/node_modules/**/*"

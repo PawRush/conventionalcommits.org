@@ -1,0 +1,27 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo "Installing Hugo..."
+      - wget https://github.com/gohugoio/hugo/releases/download/v0.152.2/hugo_extended_0.152.2_linux-amd64.tar.gz
+      - tar -xzf hugo_extended_0.152.2_linux-amd64.tar.gz
+      - mv hugo /usr/local/bin/
+      - hugo version
+
+  build:
+    commands:
+      - echo "Building Hugo site..."
+      - hugo
+      - echo "Build completed successfully"
+      - ls -la public/
+
+artifacts:
+  files:
+    - "public/**/*"
+  name: FrontendBuildOutput
+  base-directory: .
+
+cache:
+  paths:
+    - "resources/**/*"
