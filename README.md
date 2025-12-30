@@ -35,14 +35,24 @@ Once the website will be compiled, you can see the website visiting `http://loca
 
 ## Deployment
 
-**Live URL:** https://d34lfyp508h3dr.cloudfront.net
+**Production URL:** https://d3sx0nbuon3n4b.cloudfront.net
 
-Deploy to AWS using:
+The site is automatically deployed to AWS via CI/CD pipeline when changes are pushed to the `deploy-to-aws` branch.
+
+### CI/CD Pipeline
+- **Pipeline**: [ConventionalCommitsPipeline](https://us-east-1.console.aws.amazon.com/codesuite/codepipeline/pipelines/ConventionalCommitsPipeline/view)
+- **Stages**: Source → Build (Hugo) → DeployProd (CDK + S3 + CloudFront)
+- **Trigger**: Automatic on push to `deploy-to-aws` branch
+
+### Manual Deployment
+Deploy a preview environment locally:
 ```bash
-./scripts/deploy.sh
+cd infra
+npm install
+npm run deploy:preview
 ```
 
-For full deployment details, configuration, and troubleshooting, see [DEPLOYMENT.md](./DEPLOYMENT.md).
+For full deployment details, pipeline management, and troubleshooting, see [DEPLOYMENT.md](./DEPLOYMENT.md).
 
 ## Badges!
 
