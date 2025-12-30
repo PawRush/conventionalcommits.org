@@ -53,30 +53,12 @@ export class FrontendStack extends cdk.Stack {
         ],
       },
       insertHttpSecurityHeaders: false,
-      responseHeadersPolicyProps: {
-        securityHeadersBehavior: {
-          contentTypeOptions: { override: true },
-          frameOptions: {
-            frameOption: cloudfront.HeadersFrameOption.DENY,
-            override: true,
-          },
-          strictTransportSecurity: {
-            accessControlMaxAge: cdk.Duration.seconds(47304000),
-            includeSubdomains: true,
-            override: true,
-          },
-        },
-        customHeadersBehavior: {
-          customHeaders: [
-            {
-              header: "Cache-Control",
-              value: "no-store, no-cache",
-              override: true,
-            },
-          ],
-        },
-      },
       cloudFrontDistributionProps: {
+        responseHeadersPolicy: cloudfront.ResponseHeadersPolicy.fromResponseHeadersPolicyId(
+          this,
+          "ManagedSecurityHeadersPolicy",
+          "67f7725c-6f97-4210-82d7-5512b31e9d03"
+        ),
         comment: `${id} - ${environment}`,
         defaultRootObject: "index.html",
         errorResponses: [
