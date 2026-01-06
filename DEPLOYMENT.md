@@ -25,9 +25,9 @@ Production Site
 
 ### Production Environment
 - **Stack Name**: ConventionalCommitsFrontend-prod
-- **Website URL**: https://d3sx0nbuon3n4b.cloudfront.net
-- **CloudFront Distribution**: EYDJ0QZ24W9AH
-- **S3 Bucket**: conventionalcommitsfrontend-prod-644722646588
+- **Website URL**: https://d1wli9ledumf0a.cloudfront.net
+- **CloudFront Distribution**: E257EW6BRDW7Q4
+- **S3 Bucket**: conventionalcommitsfrontend-prod-v2-644722646588
 - **Region**: us-east-1
 
 ### CI/CD Pipeline
@@ -121,12 +121,12 @@ aws logs tail /aws/codebuild/ConventionalCommits-FrontendBuild --follow
 ## CDK Bootstrap
 
 The CDK bootstrap has been configured with trust for pipeline roles:
-- **BuildRole**: arn:aws:iam::644722646588:role/ConventionalCommitsPipelineStack-BuildRoleA9A369DE-v3gqcH4CpLgD
-- **DeployRole**: arn:aws:iam::644722646588:role/ConventionalCommitsPipelineStack-DeployRole8C803698-4y5jdaMCy0Vl
+- **BuildRole**: arn:aws:iam::644722646588:role/ConventionalCommitsPipelineStack-BuildRoleA9A369DE-9aYKplElR4r6
+- **DeployRole**: arn:aws:iam::644722646588:role/ConventionalCommitsPipelineStack-DeployRole8C803698-4VUOdvhkNFO6
 
 If you need to re-bootstrap:
 ```bash
-./scripts/bootstrap-cdk.sh
+./scripts/bootstrap-cdk.sh ConventionalCommitsPipelineStack
 ```
 
 ## Troubleshooting
@@ -143,7 +143,7 @@ If you need to re-bootstrap:
 
 ### CloudFront Not Updating
 - Check if invalidation was created successfully
-- Manual invalidation: `aws cloudfront create-invalidation --distribution-id EYDJ0QZ24W9AH --paths "/*"`
+- Manual invalidation: `aws cloudfront create-invalidation --distribution-id E257EW6BRDW7Q4 --paths "/*"`
 - Invalidations can take 5-15 minutes
 
 ### Stack Drift
@@ -214,6 +214,14 @@ npm run destroy
 - Changed npm ci to npm install (project excludes package-lock.json)
 - First successful automated deployment
 - Production URL: https://d3sx0nbuon3n4b.cloudfront.net
+
+### Pipeline Completion and Production Deployment (2026-01-06)
+- Configured CDK bootstrap with trust for pipeline roles
+- Fixed S3 bucket naming conflicts by adding v2 suffix
+- Successfully deployed prod stack via automated pipeline
+- New production URL: https://d1wli9ledumf0a.cloudfront.net
+- CloudFront Distribution: E257EW6BRDW7Q4
+- All pipeline stages (Source → Build → DeployProd) executing successfully
 
 ## Additional Resources
 
