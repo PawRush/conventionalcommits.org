@@ -23,13 +23,13 @@ export class FrontendStack extends cdk.Stack {
 
     const cloudfrontToS3 = new CloudFrontToS3(this, "CloudFrontToS3", {
       bucketProps: {
-        bucketName: `${id.toLowerCase()}-${this.account}`,
+        bucketName: `${id.toLowerCase()}-v2-${this.account}`,
         removalPolicy,
         autoDeleteObjects: !isProd,
         versioned: false,
       },
       loggingBucketProps: {
-        bucketName: `${id.toLowerCase()}-s3logs-${this.account}`,
+        bucketName: `${id.toLowerCase()}-s3logs-v2-${this.account}`,
         removalPolicy,
         autoDeleteObjects: !isProd,
         lifecycleRules: [
@@ -41,7 +41,7 @@ export class FrontendStack extends cdk.Stack {
         ],
       },
       cloudFrontLoggingBucketProps: {
-        bucketName: `${id.toLowerCase()}-cflogs-${this.account}`,
+        bucketName: `${id.toLowerCase()}-cflogs-v2-${this.account}`,
         removalPolicy,
         autoDeleteObjects: !isProd,
         lifecycleRules: [
